@@ -597,14 +597,40 @@
       }
     });
 
-    // Video autoplay on hover
-    document.querySelectorAll('.video-preview video').forEach(function(video) {
+    var videos = document.querySelectorAll('.video-preview video');
+
+    // Helper to pause all videos except the current one
+    function pauseOthers(current) {
+      videos.forEach(function(v) {
+        if (v !== current) {
+          v.pause();
+          v.currentTime = 0;
+        }
+      });
+    }
+
+    videos.forEach(function(video) {
+      // Desktop: play on hover, pause on mouse leave
       video.addEventListener('mouseenter', function() {
+        pauseOthers(video);
         video.play();
       });
       video.addEventListener('mouseleave', function() {
         video.pause();
         video.currentTime = 0;
+      });
+
+      // Mobile: play/pause on tap/click
+      video.addEventListener('click', function(e) {
+        if (video.paused) {
+          pauseOthers(video);
+          video.play();
+        } else {
+          video.pause();
+          video.currentTime = 0;
+        }
+        // Prevent default to avoid double toggling on some browsers
+        e.preventDefault();
       });
     });
   });
